@@ -1,58 +1,89 @@
-﻿
-namespace TextAdventure
+﻿namespace TextAdventure
 {
     class Encounters
     {
+        static Random rand = new Random();
         // Encounters
         #region
         public static void FirstEncounter()
         {
             // Story
 
-            Console.ReadKey();
+            /* Wait to continue */Console.ReadKey();
         }
         #endregion
         // Encounter Tools
         #region
-        public static void Combat(bool random, string name, int power, int health)
+        public static void Combat(bool random, string name, int powerMin, int powerMax, int health, string weaponType)
         {
-            string n = "";
-            int p = 0;
-            int h = 0;
+            string monName = "";
+            int monPowerMin = 0;
+            int monPowerMax = 0;
+            int monHP = 0;
+            int distance = 0;
+            string[] attackActions = { "(A)ttack", "(A)dvance" };
+            string[] specialActions = { "(S)pecial", "(W)ait", "(E)vade" };
+
             if (random)
             { 
             
             }
             else
             {
-                n = name;
-                h = health;
-                p = power;
+                monName = name;
+                monHP = health;
+                monPowerMin = powerMin;
+                monPowerMax = powerMax;
             }
-            while (h < 0)
+            while (monHP < 0)
             {
-                Console.WriteLine("========================");
-                Console.WriteLine("| (A)ttack | (S)pecial |");
-                Console.WriteLine("| (D)efend |   (R)un   |");
-                Console.WriteLine("========================");
-                Console.WriteLine("Health: " + AdventureGame.currentPlayer.health + "Potions: " + AdventureGame.currentPlayer.potion);
+                bool outOfRange = false;
+                bool defending = false;
+                Console.WriteLine("===================================");
+                if (distance > 0 && weaponType == "Melee") // Monster too far
+                {
+                    Console.WriteLine($"  {attackActions[1]}  |  {specialActions[1]}  "); // Advance | Wait
+                    outOfRange = true;
+                }
+                else if (distance <= 0 && weaponType == "Ranged") // Monster too close
+                    Console.WriteLine($"  {attackActions[0]}  |  {specialActions[2]}  "); // Attack | Evade
+                else // Monster in range
+                    Console.WriteLine($"  {attackActions[0]}  |  {specialActions[0]}  "); // Attack | Special
+                Console.WriteLine("|  (D)efend  |  (F)lee     |");
+                Console.WriteLine("===================================");
+                Console.WriteLine("Health: " + AdventureGame.currentPlayer.health + "   Potions: " + AdventureGame.currentPlayer.potion);
                 string input = Console.ReadLine();
+                Console.Clear();
                 // Player Actions
-                if (input.ToLower() == "attack" || input.ToLower() == "a")
+                if (input.ToLower() == "attack" || input.ToLower() == "a" && outOfRange == false)
                 {
                     // Attack
                 }
-                if (input.ToLower() == "special" || input.ToLower() == "s")
+                else if (input.ToLower() == "advance" || input.ToLower() == "a" && outOfRange == true)
+                {
+                    // Advance
+                }
+                else if (input.ToLower() == "special" || input.ToLower() == "s")
                 {
                     // Weapon Special
                 }
-                if (input.ToLower() == "defend" || input.ToLower() == "d")
+                else if (input.ToLower() == "wait" || input.ToLower() == "w" && outOfRange == true)
+                {
+                    // Wait for monster to advance
+                }
+                else if (input.ToLower() == "defend" || input.ToLower() == "d")
                 {
                     // Defend
                 }
-                if (input.ToLower() == "run" || input.ToLower() == "r")
+                else if (input.ToLower() == "flee" || input.ToLower() == "f")
                 {
-                    // Run
+                    // Escape encounter
+                }
+                else
+                {
+                    // Invalid Input
+                    Console.WriteLine("Invalid action");
+                    continue;
                 }
             }
         }

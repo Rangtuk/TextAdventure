@@ -6,7 +6,6 @@
         static void Main(string[] args)
         {
             Start();
-            Encounters monster = new();
         }
         static void Start()
         {
