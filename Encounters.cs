@@ -1,14 +1,71 @@
 ﻿
 namespace TextAdventure
 {
-    public class Encounter
+    class Encounters
     {
-        public Encounter()
+        // Encounters
+        #region
+        public static void FirstEncounter()
         {
+            // Story
+
+            Console.ReadKey();
+        }
+        #endregion
+        // Encounter Tools
+        #region
+        public static void Combat(bool random, string name, int power, int health)
+        {
+            string n = "";
+            int p = 0;
+            int h = 0;
+            if (random)
+            { 
+            
+            }
+            else
+            {
+                n = name;
+                h = health;
+                p = power;
+            }
+            while (h < 0)
+            {
+                Console.WriteLine("========================");
+                Console.WriteLine("| (A)ttack | (S)pecial |");
+                Console.WriteLine("| (D)efend |   (R)un   |");
+                Console.WriteLine("========================");
+                Console.WriteLine("Health: " + AdventureGame.currentPlayer.health + "Potions: " + AdventureGame.currentPlayer.potion);
+                string input = Console.ReadLine();
+                // Player Actions
+                if (input.ToLower() == "attack" || input.ToLower() == "a")
+                {
+                    // Attack
+                }
+                if (input.ToLower() == "special" || input.ToLower() == "s")
+                {
+                    // Weapon Special
+                }
+                if (input.ToLower() == "defend" || input.ToLower() == "d")
+                {
+                    // Defend
+                }
+                if (input.ToLower() == "run" || input.ToLower() == "r")
+                {
+                    // Run
+                }
+            }
+        }
+
+        public static void OldSystem()
+        {
+            /*
+            #region Old Combat System
+            // TEMP //
             var playerHealth = 20;
             var mobHealth = 20;
             var spellSlots = 3;
-
+            // TEMP //
             while (playerHealth > 0 && mobHealth > 0)
             {
                 var blocking = false;
@@ -139,7 +196,10 @@ namespace TextAdventure
                 }
                 slots--;
             }
+            #endregion
+            */
         }
+        #endregion
     }
 }
         
