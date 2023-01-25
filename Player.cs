@@ -10,22 +10,30 @@
         public int potion = 5;
 
         // Equipment
-        public string weaponType; // Melee, Ranged
-        public int weaponMaxValue = 0; //Attack value (not special)
-        public int weaponMinValue = 0; /**/
-        public int weaponSpecialSlots = 0;
+        Weapon equippedWeapon = new Weapon();
         public int armorValue = 0;
 
         public struct Weapon
         {
+            public int maxDamage;
+            public int minDamage;
+
+            public string quality;
             public string type;
-            public int max;
-            public int min;
-            public int slots;
+            public int specialSlots;
+            public string specialResourceName;
+            public Weapon(string Type, string Quality, int Max, int Min, int SpecialSlots, string SpecialResourceName)
+            {
+
+                this.maxDamage = Max;
+                this.minDamage = Min;
+
+                this.quality = Quality;
+                this.type = Type;
+                this.specialSlots = SpecialSlots;
+                this.specialResourceName = SpecialResourceName;
+            }
         }
-        public Dictionary<string, Weapon> WeaponsDict =  new Dictionary<string, Weapon>() 
-        {
-            
-        };
+
     }
 }

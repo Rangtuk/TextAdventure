@@ -14,7 +14,7 @@
         #endregion
         // Encounter Tools
         #region
-        public static void Combat(bool random, string name, int powerMin, int powerMax, int health, string weaponType)
+        public static void Combat(bool random, string name, int powerMin, int powerMax, int health, Player.Weapon weapon)
         {
             string monName = "";
             int monPowerMin = 0;
@@ -40,12 +40,12 @@
                 bool outOfRange = false;
                 bool defending = false;
                 Console.WriteLine("===================================");
-                if (distance > 0 && weaponType == "Melee") // Monster too far
+                if (distance > 0 && weapon.type == "Melee") // Monster too far
                 {
                     Console.WriteLine($"  {attackActions[1]}  |  {specialActions[1]}  "); // Advance | Wait
                     outOfRange = true;
                 }
-                else if (distance <= 0 && weaponType == "Ranged") // Monster too close
+                else if (distance <= 0 && weapon.type == "Ranged") // Monster too close
                     Console.WriteLine($"  {attackActions[0]}  |  {specialActions[2]}  "); // Attack | Evade
                 else // Monster in range
                     Console.WriteLine($"  {attackActions[0]}  |  {specialActions[0]}  "); // Attack | Special
