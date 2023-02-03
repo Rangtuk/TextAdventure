@@ -2,235 +2,249 @@
 {
     class Encounters
     {
-        static Random rand = new Random();
+        public static Random rand = new();
+        // Encounters Generic
+
         // Encounters
-        #region
         public static void FirstEncounter()
         {
-            // Story
+            var enemyOrc = Monsters[/*ORC*/ 0];
+            Console.Clear();
+            if ("aeiou".Contains(enemyOrc.Name[0]))
+                Console.WriteLine("Upon opening the door, you noticed an " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
+            else
+                Console.WriteLine("Upon opening the door, you noticed a " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
+            Console.WriteLine("Outside the cell, a rusty shortsword sits propped up against the wall.");
+            Console.WriteLine("You retrieve it and charge towards your former captor with newfound vigor.");
+            Console.WriteLine("The " + enemyOrc.Name + " notices your charge, preparing to fight...");
 
-            /* Wait to continue */Console.ReadKey();
+            GameOperations.PressAnyKeyToContinue();
+
+            Combat(enemyOrc.Name, enemyOrc.Power, enemyOrc.Health, enemyOrc.GoldMax);
         }
-        #endregion
-        // Encounter Tools
-        #region
-        public static void Combat(bool random, string name, int powerMin, int powerMax, int health, Player.Weapon weapon)
+        public static void BasicFightEncounter()
         {
-            string monName = "";
-            int monPowerMin = 0;
-            int monPowerMax = 0;
-            int monHP = 0;
-            int distance = 0;
-            string[] attackActions = { "(A)ttack", "(A)dvance" };
-            string[] specialActions = { "(S)pecial", "(W)ait", "(E)vade" };
-
-            if (random)
-            { 
-            
+            Monster randomMonster = Monsters[rand.Next(0, Monsters.Count)];
+        //LABEL
+        repeat:
+            if ("aeiou".Contains(randomMonster.Name))
+                Console.WriteLine("As you turn the corner, you are confronted by an " + randomMonster.Name + "!");
+            else
+                Console.WriteLine("As you turn the corner, you are confronted by a " + randomMonster.Name + "!");
+            Console.WriteLine("||  (F)ight  |  (R)un  |");
+            string input = GameOperations.PlayerInput("You decide to... ");
+            Console.Clear();
+            if (input.ToLower() == "fight" || input.ToLower() == "f")
+            {
+                Console.WriteLine("You decide to fight!");
+                Combat(randomMonster.Name, randomMonster.Power, randomMonster.Health, randomMonster.GoldMax);
+            }
+            else if (input.ToLower() == "run" || input.ToLower() == "r")
+            {
+                Console.WriteLine("You decide to run!");
+                Console.WriteLine("You find a path around the " + randomMonster.Name + " before they have time to notice you.");
             }
             else
             {
-                monName = name;
-                monHP = health;
-                monPowerMin = powerMin;
-                monPowerMax = powerMax;
+                Console.WriteLine("INVALID ACTION");
+                goto repeat;
             }
-            while (monHP < 0)
+        }
+
+        // Encounter Tools
+        public static void RandomEncounter()
+        {
+            switch (rand.Next(0, 2))
             {
-                bool outOfRange = false;
-                bool defending = false;
-                Console.WriteLine("===================================");
-                if (distance > 0 && weapon.type == "Melee") // Monster too far
-                {
-                    Console.WriteLine($"  {attackActions[1]}  |  {specialActions[1]}  "); // Advance | Wait
-                    outOfRange = true;
-                }
-                else if (distance <= 0 && weapon.type == "Ranged") // Monster too close
-                    Console.WriteLine($"  {attackActions[0]}  |  {specialActions[2]}  "); // Attack | Evade
-                else // Monster in range
-                    Console.WriteLine($"  {attackActions[0]}  |  {specialActions[0]}  "); // Attack | Special
-                Console.WriteLine("|  (D)efend  |  (F)lee     |");
-                Console.WriteLine("===================================");
-                Console.WriteLine("Health: " + AdventureGame.currentPlayer.health + "   Potions: " + AdventureGame.currentPlayer.potion);
-                string input = Console.ReadLine();
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    BasicFightEncounter();
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    //SHOP ENCOUNTER
+                    break;
+                case 10:
+                    //RARE ENCOUNTER
+                    break;
+            }
+        }
+        public static void Combat(string name, int power, int health, int gold)
+        {
+            string mobName = name;
+            int mobPower = power;
+            int mobHealth = health;
+            int mobGoldMax = gold;
+            bool healFailed = false;
+            bool isDefending = false;
+            bool isFleeing = false;
+
+            while (mobHealth > 0)
+            {
+            //LABEL
+            repeat:
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                if ("aeiou".Contains(mobName[0]))
+                    Console.WriteLine("An " + mobName + " blocks your path.");
+                else
+                    Console.WriteLine("A " + mobName + " blocks your path.");
+                Console.WriteLine("It has " + mobHealth + " health remaining.");
+                Console.WriteLine("  Health: " + Program.currentPlayer.health + "   |   Potions: " + Program.currentPlayer.potions);
+                Console.WriteLine("=================================");
+                Console.WriteLine("||   (A)ttack  |  (D)efend     ||");
+                Console.WriteLine("||    (H)eal   |   (F)lee      ||");
+                Console.WriteLine("=================================");
+                Console.ForegroundColor = ConsoleColor.White;
+                string input = GameOperations.PlayerInput("You decide to... ");
                 Console.Clear();
-                // Player Actions
-                if (input.ToLower() == "attack" || input.ToLower() == "a" && outOfRange == false)
+                int damageToMonster = rand.Next(1, 4) + rand.Next(1, Program.currentPlayer.weaponValue + 1);
+                if (input.ToLower() == "attack" || input.ToLower() == "a")
                 {
-                    // Attack
-                }
-                else if (input.ToLower() == "advance" || input.ToLower() == "a" && outOfRange == true)
-                {
-                    // Advance
-                }
-                else if (input.ToLower() == "special" || input.ToLower() == "s")
-                {
-                    // Weapon Special
-                }
-                else if (input.ToLower() == "wait" || input.ToLower() == "w" && outOfRange == true)
-                {
-                    // Wait for monster to advance
+                    Console.WriteLine("You decide to attack.");
+                    if (rand.Next(1, 21) == 20)
+                    {
+                        damageToMonster++;
+                        damageToMonster *= 2;
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine("CRITICAL HIT!!");
+                        Console.WriteLine("You channel your strength into a mighty blow, you strike the " + mobName + " for " + damageToMonster + " damage!");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("You strike the " + mobName + " for " + damageToMonster + " damage.");
+                    }
+                    mobHealth -= damageToMonster;
                 }
                 else if (input.ToLower() == "defend" || input.ToLower() == "d")
                 {
-                    // Defend
+                    isDefending = true;
+                    Console.WriteLine("You decide to defend.");
+                    damageToMonster /= 2;
+                    if (damageToMonster < 1)
+                        damageToMonster = 0;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("You ready your weapon to parry the " + mobName + "'s attack. It attacks, and you riposte for " + damageToMonster + " damage.");
+                    mobHealth -= damageToMonster;
                 }
-                else if (input.ToLower() == "flee" || input.ToLower() == "f")
+                else if (input.ToLower() == "heal" || input.ToLower() == "h")
                 {
-                    // Escape encounter
-                }
-                else
-                {
-                    // Invalid Input
-                    Console.WriteLine("Invalid action");
-                    continue;
-                }
-            }
-        }
-
-        public static void OldSystem()
-        {
-            /*
-            #region Old Combat System
-            // TEMP //
-            var playerHealth = 20;
-            var mobHealth = 20;
-            var spellSlots = 3;
-            // TEMP //
-            while (playerHealth > 0 && mobHealth > 0)
-            {
-                var blocking = false;
-                Console.WriteLine("You have " + playerHealth + " health and " + spellSlots + " spellslots remaining.");
-                Console.WriteLine("The monster has " + mobHealth + " health.");
-                Console.WriteLine("You can:");
-                Console.WriteLine("attack | defend | use magic | use item");
-                var option = Console.ReadLine().ToLower();
-                Console.Clear();
-                // process player action
-                if (option == "attack")
-                {
-                    // if player attacks
-                    mobHealth = PlayerAttack(mobHealth);
-                }
-                else if (option == "defend")
-                {
-                    // if player defends
-                    Console.WriteLine("You ready yourself against the monster.");
-                    blocking = true;
-                }
-                else if (option == "use magic")
-                {
-                    // if player uses magic
-                    if (spellSlots != 0)
-                        playerMagic(ref spellSlots, ref mobHealth, ref playerHealth);
+                    Console.WriteLine("You decide to heal.");
+                    if (Program.currentPlayer.potions == 0)
+                    {
+                        healFailed = true;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("As you fumble around in your bags, all you can find are empty glass vials. You are out of potions.");
+                    }
                     else
                     {
-                        Console.WriteLine("You are out of spell slots.");
+                        int potionValue = rand.Next(3, 7);
+                        Console.WriteLine("You hastily retrieve a potion from your bags, uncorking it and swiftly downing the concoction.");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("You regain " + potionValue + " health.");
+                        Program.currentPlayer.health += potionValue;
+                        if (Program.currentPlayer.health > 10)
+                        {
+                            Program.currentPlayer.health = 10;
+                            Console.WriteLine("You are at full health.");
+                        }
+                        Program.currentPlayer.potions -= 1;
+                        GameOperations.PressAnyKeyToContinue();
                         continue;
                     }
                 }
-                else if (option == "use item")
+                else if (input.ToLower() == "flee" || input.ToLower() == "f")
                 {
-                    // if player uses an item
-                    Console.WriteLine("You have zero items left.");
-                    continue;
+                    Console.WriteLine("You decide to flee.");
+
+                    if (rand.Next(0, 2) == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("As you attempt to flee from the " + mobName + " it strikes! Catching you in the back, and halting your escape.");
+                    }
+                    else
+                    {
+                        isFleeing = true;
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Success! You manage to evade the " + mobName + "'s blows. Sprinting past it and heading further into the dungeon.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        GameOperations.PressAnyKeyToContinue();
+                        break;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Unrecognized action.");
-                    continue;
+                    Console.WriteLine("INVALID ACTION");
+                    goto repeat;
                 }
                 if (mobHealth > 0)
-                    playerHealth = MobAttack(playerHealth, blocking);
-
-            };
-
-            Console.Clear();
-            if (playerHealth <= 0)
-            {
-                Console.WriteLine("You have died.");
+                    Program.currentPlayer.health = MonsterTurn(isDefending, healFailed, mobPower, mobName, Program.currentPlayer.health);
+                if (Program.currentPlayer.health <= 0)
+                {
+                    // U DIED LOL SO BAD HAHAHAHAHAHA
+                    Console.Clear();
+                    Console.WriteLine("The light beings to fade from your eyes you see the " + mobName + " stand over your body triumphantly...");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("YOU HAVE DIED");
+                    Console.WriteLine("Press any key to pass on...");
+                    Console.ReadKey();
+                    Environment.Exit(0);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                GameOperations.PressAnyKeyToContinue();
             }
-            if (mobHealth <= 0)
+            if (isFleeing == false && mobHealth <= 0) // Victory
             {
-                Console.WriteLine("You have slain the monster!");
+                int goldGained = rand.Next(1, mobGoldMax + 1);
+                Console.WriteLine("The " + mobName + " is slain! You gain " + goldGained + " gold.");
+                Program.currentPlayer.gold += goldGained;
+                Program.currentPlayer.monstersKilled += 1;
+                GameOperations.PressAnyKeyToContinue();
             }
-
-            static int PlayerAttack(int mobHP)
-            {
-                var rndDmg = new Random();
-                var rndHit = new Random();
-                var dmg = rndDmg.Next(1, 4);
-                var toHit = rndHit.Next(1, 21);
-                if (toHit == 20)
-                {
-                    mobHP -= dmg * 2;
-                    Console.WriteLine("CRITICAL HIT! You hit for " + ((dmg + 1) * 2) + " damage!");
-                }
-                else if (toHit == 1)
-                    Console.WriteLine("You miss!");
-                else
-                {
-                    Console.WriteLine("You hit for " + dmg + " damage.");
-                    mobHP -= dmg;
-                }
-                return mobHP;
-            }
-
-            static int MobAttack(int playerHP, bool blocking)
-            {
-                var rndDmg = new Random();
-                var rndHit = new Random();
-                var dmg = rndDmg.Next(1, 4);
-                var toHit = rndHit.Next(1, 21);
-                if (blocking == false)
-                {
-                    if (toHit <= 3)
-                        Console.WriteLine("The monster attacks, but misses!");
-                    else
-                    {
-                        Console.WriteLine("The monster hits you for " + dmg + " damage.");
-                        playerHP -= dmg;
-                    }
-                }
-                else
-                {
-                    if (toHit <= 3)
-                        Console.WriteLine("The monster attacks, but misses!");
-                    else
-                    {
-                        Console.WriteLine("You block the attack! The monster would have hit you for " + dmg + " damage.");
-                    }
-                }
-                return playerHP;
-            }
-
-            static void playerMagic(ref int slots, ref int mobHP, ref int playerHP)
-            {
-                Console.WriteLine("What would you like to cast?");
-                Console.WriteLine("Spells known: firebolt | heal");
-                var rnd = new Random();
-                var spell = Console.ReadLine().ToLower();
-                Console.Clear();
-                if (spell == "firebolt")
-                {
-                    var spellDmg = rnd.Next(2, 5);
-                    mobHP -= spellDmg;
-                    Console.WriteLine("A bolt of fire blasts the monster for " + spellDmg + " damage.");
-                }
-                if (spell == "heal")
-                {
-                    var spellHeal = rnd.Next(3, 5);
-                    playerHP += spellHeal;
-                    Console.WriteLine("The spell heals you for " + spellHeal + " health.");
-                    if (playerHP > 20)
-                        playerHP = 20;
-                }
-                slots--;
-            }
-            #endregion
-            */
         }
-        #endregion
+
+        public static int MonsterTurn(bool isDefending, bool healFailed, int mobPower, string mobName, int playerHealth)
+        {
+            int damageToPlayer = mobPower - Program.currentPlayer.armorValue;
+            if (isDefending == true)
+                damageToPlayer /= 4;
+            else if (healFailed == true)
+                damageToPlayer /= 2;
+            if (damageToPlayer < 1)
+                damageToPlayer = 0;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("The " + mobName + " strikes you for " + damageToPlayer + " damage.");
+            return playerHealth -= damageToPlayer;
+        }
+
+        public static Dictionary<int, Monster> Monsters = new()
+        {
+            // Damage, Health, Gold
+            {0, new("orc",2,5,7)},
+            {1, new("ooze",1,6,5)},
+            {2, new("goblin",1,3,10)}
+        };
+        public struct Monster
+        {
+            public int Power;
+            public int Health;
+            public int GoldMax;
+            public string Name;
+            public Monster(string name, int power, int health, int goldMax)
+            {
+                Name = name;
+                Power = power;
+                Health = health;
+                GoldMax = goldMax;
+            }
+        }
+
     }
 }
         
