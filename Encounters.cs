@@ -5,10 +5,10 @@
         public static Random rand = new();
         // Encounters Generic
 
-        // Encounters
+        #region Encounters
         public static void FirstEncounter()
         {
-            var enemyOrc = Monsters[/*ORC*/ 0];
+            var enemyOrc = BasicMonsters[/*ORC*/ 0];
             Console.Clear();
             if ("aeiou".Contains(enemyOrc.Name[0]))
                 Console.WriteLine("Upon opening the door, you noticed an " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
@@ -24,7 +24,7 @@
         }
         public static void BasicFightEncounter()
         {
-            Monster randomMonster = Monsters[rand.Next(0, Monsters.Count)];
+            Monster randomMonster = BasicMonsters[rand.Next(0, BasicMonsters.Count)];
         //LABEL
         repeat:
             if ("aeiou".Contains(randomMonster.Name))
@@ -50,31 +50,58 @@
                 goto repeat;
             }
         }
-
-        // Encounter Tools
-        public static void RandomEncounter()
+        public static void RareEncounter()
         {
-            switch (rand.Next(0, 2))
+            Monster randomMonster = RareMonsters[rand.Next(0, RareMonsters.Count)];
+        //LABEL
+        repeat:
+            Console.WriteLine("As you turn the corner, you are confronted by " + randomMonster.Name + ", " + randomMonster.RareTitle + "!");
+            Console.WriteLine("||  (F)ight  |  (R)un  |");
+            string input = GameOperations.PlayerInput("You decide to... ");
+            Console.Clear();
+            if (input.ToLower() == "fight" || input.ToLower() == "f")
             {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    BasicFightEncounter();
-                    break;
-                case 6:
-                case 7:
-                case 8:
-                case 9:
-                    //SHOP ENCOUNTER
-                    break;
-                case 10:
-                    //RARE ENCOUNTER
-                    break;
+                Console.WriteLine("You decide to fight!");
+                Combat(randomMonster.Name, randomMonster.Power, randomMonster.Health, randomMonster.GoldMax);
+            }
+            else if (input.ToLower() == "run" || input.ToLower() == "r")
+            {
+                Console.WriteLine("You decide to run!");
+                if (rand.Next(0, 11) <= 3) //30%
+                {
+                    Console.WriteLine(randomMonster.RareTitle + " notices your attempt to flee, and moves to block your escape! Seems you will have no choice but to fight.");
+                    GameOperations.PressAnyKeyToContinue();
+                    Combat(randomMonster.Name, randomMonster.Power, randomMonster.Health, randomMonster.GoldMax);
+                }
+                else
+                {
+                    Console.WriteLine(randomMonster.Name + " moves to intercept you. You charge forth with a burst of adrenaline, narrowly dodging " + randomMonster.RareTitle + "'s blows, and escaping further into the dungeon.");
+                    GameOperations.PressAnyKeyToContinue();
+                }
+            }
+            else
+            {
+                Console.WriteLine("INVALID ACTION");
+                goto repeat;
             }
         }
+        public static void BossEncounter()
+        {
+
+        }
+        public static void RandomEncounter()
+        {
+            int encounter = rand.Next(0, 21);
+            if (encounter <= 10)
+                BasicFightEncounter();
+            else if (encounter <= 19)
+                Shop.LoadShop(Program.currentPlayer);
+            else if (encounter == 20)
+                RareEncounter();
+        }
+        #endregion
+
+        #region Encounter Tools
         public static void Combat(string name, int power, int health, int gold)
         {
             string mobName = name;
@@ -223,12 +250,19 @@
             return playerHealth -= damageToPlayer;
         }
 
-        public static Dictionary<int, Monster> Monsters = new()
+        public static Dictionary<int, Monster> BasicMonsters = new()
         {
             // Damage, Health, Gold
             {0, new("orc",2,5,7)},
             {1, new("ooze",1,6,5)},
             {2, new("goblin",1,3,10)}
+        };
+        public static Dictionary<int, Monster> RareMonsters = new()
+        {
+            // Damage, Health, Gold
+            {0, new("Grumush Mansbane","The Orc Chieftain",3,17,14)},
+            {1, new("Fleshburner","The Monstrous Ooze",2,20,10)},
+            {2, new("Snikkspackle","The Goblin King",2,13,20)},
         };
         public struct Monster
         {
@@ -236,15 +270,25 @@
             public int Health;
             public int GoldMax;
             public string Name;
+            public string RareTitle;
             public Monster(string name, int power, int health, int goldMax)
             {
                 Name = name;
                 Power = power;
                 Health = health;
                 GoldMax = goldMax;
+                RareTitle = "";
+            }
+            public Monster(string name, string rareTitle, int power, int health, int goldMax)
+            {
+                Name = name;
+                Power = power;
+                Health = health;
+                GoldMax = goldMax;
+                RareTitle = rareTitle;
             }
         }
-
+        #endregion
     }
 }
-        
+
