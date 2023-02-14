@@ -131,7 +131,7 @@
                 string input = GameOperations.PlayerInput("You decide to... ");
                 Console.Clear();
                 int damageToMonster = rand.Next(1, 4) + rand.Next(1, Program.currentPlayer.weaponValue + 1);
-                if (input.ToLower() == "attack" || input.ToLower() == "a")
+                if (input == "attack" || input == "a")
                 {
                     Console.WriteLine("You decide to attack.");
                     if (rand.Next(1, 21) == 20)
@@ -149,7 +149,7 @@
                     }
                     mobHealth -= damageToMonster;
                 }
-                else if (input.ToLower() == "defend" || input.ToLower() == "d")
+                else if (input == "defend" || input == "d")
                 {
                     isDefending = true;
                     Console.WriteLine("You decide to defend.");
@@ -160,7 +160,7 @@
                     Console.WriteLine("You ready your weapon to parry the " + mobName + "'s attack. It attacks, and you riposte for " + damageToMonster + " damage.");
                     mobHealth -= damageToMonster;
                 }
-                else if (input.ToLower() == "heal" || input.ToLower() == "h")
+                else if (input == "heal" || input == "h")
                 {
                     Console.WriteLine("You decide to heal.");
                     if (Program.currentPlayer.potions == 0)
@@ -186,7 +186,7 @@
                         continue;
                     }
                 }
-                else if (input.ToLower() == "flee" || input.ToLower() == "f")
+                else if (input == "flee" || input == "f")
                 {
                     Console.WriteLine("You decide to flee.");
 

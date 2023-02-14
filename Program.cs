@@ -29,6 +29,8 @@
             Console.WriteLine("You awaken in a dungeon. You feel dazed, and hurt all over. You cannot remember how you got here.");
             if (currentPlayer.name == "")
                 Console.WriteLine("You can't even remember your name...");
+            else if (currentPlayer.name == "shopTest")
+                Shop.LoadShop(currentPlayer);
             else
                 Console.WriteLine("You remember your name is " + currentPlayer.name + ".");
 

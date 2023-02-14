@@ -6,7 +6,7 @@
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(value);
-            return Console.ReadLine().Trim();
+            return Console.ReadLine().Trim().ToLower();
         }
 
         public static void PressAnyKeyToContinue()
