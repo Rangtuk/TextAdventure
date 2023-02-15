@@ -27,11 +27,11 @@
             Monster randomMonster = BasicMonsters[rand.Next(0, BasicMonsters.Count)];
         //LABEL
         repeat:
-            if ("aeiou".Contains(randomMonster.Name))
+            if ("aeiou".Contains(randomMonster.Name[0]))
                 Console.WriteLine("As you turn the corner, you are confronted by an " + randomMonster.Name + "!");
             else
                 Console.WriteLine("As you turn the corner, you are confronted by a " + randomMonster.Name + "!");
-            Console.WriteLine("||  (F)ight  |  (R)un  |");
+            Console.WriteLine("||  (F)ight  |  (R)un  ||");
             string input = GameOperations.PlayerInput("You decide to... ");
             Console.Clear();
             if (input.ToLower() == "fight" || input.ToLower() == "f")
@@ -42,11 +42,21 @@
             else if (input.ToLower() == "run" || input.ToLower() == "r")
             {
                 Console.WriteLine("You decide to run!");
-                Console.WriteLine("You find a path around the " + randomMonster.Name + " before they have time to notice you.");
+                if (rand.Next(1, 11) <= 1) //10% to fail
+                {
+                    Console.WriteLine("The " + randomMonster.Name + " notices your attempt to flee, and moves to block your escape! Seems you will have no choice but to fight.");
+                    GameOperations.PressAnyKeyToContinue();
+                    Combat(randomMonster.Name, randomMonster.Power, randomMonster.Health, randomMonster.GoldMax);
+                }
+                else
+                {
+                    Console.WriteLine("You find a path around the " + randomMonster.Name + " before they have time to notice you.");
+                    GameOperations.PressAnyKeyToContinue();
+                }
             }
             else
             {
-                Console.WriteLine("INVALID ACTION");
+                Console.WriteLine(GameOperations.inputError);
                 goto repeat;
             }
         }
@@ -56,7 +66,7 @@
         //LABEL
         repeat:
             Console.WriteLine("As you turn the corner, you are confronted by " + randomMonster.Name + ", " + randomMonster.RareTitle + "!");
-            Console.WriteLine("||  (F)ight  |  (R)un  |");
+            Console.WriteLine("||  (F)ight  |  (R)un  ||");
             string input = GameOperations.PlayerInput("You decide to... ");
             Console.Clear();
             if (input.ToLower() == "fight" || input.ToLower() == "f")
@@ -67,7 +77,7 @@
             else if (input.ToLower() == "run" || input.ToLower() == "r")
             {
                 Console.WriteLine("You decide to run!");
-                if (rand.Next(0, 11) <= 3) //30%
+                if (rand.Next(1, 11) <= 3) //30% to fail
                 {
                     Console.WriteLine(randomMonster.RareTitle + " notices your attempt to flee, and moves to block your escape! Seems you will have no choice but to fight.");
                     GameOperations.PressAnyKeyToContinue();
@@ -81,23 +91,38 @@
             }
             else
             {
-                Console.WriteLine("INVALID ACTION");
+                Console.WriteLine(GameOperations.inputError);
                 goto repeat;
             }
         }
         public static void BossEncounter()
         {
-
+            Console.WriteLine("Ahhh big spooky boss that doesnt exist yet! You win... probably");
         }
-        public static void RandomEncounter()
+        public static void ShopEncounter()
         {
-            int encounter = rand.Next(0, 21);
-            if (encounter <= 10)
-                BasicFightEncounter();
-            else if (encounter <= 19)
+            Console.WriteLine("You come across a small shop.");
+            Console.WriteLine("|| (E)nter       (L)eave ||");
+            string input = GameOperations.PlayerInput("You decide to... ");
+            if (input == "enter" || input == "e")
                 Shop.LoadShop(Program.currentPlayer);
-            else if (encounter == 20)
+            else if (input == "leave" || input == "l")
+            {
+                System.Console.WriteLine("You leave the shop behind, heading further into the dungeon.");
+                GameOperations.PressAnyKeyToContinue();
+            }
+        }
+        public static void RandomEncounterTable()
+        {
+            int encounter = rand.Next(1, 101);
+            if (encounter <= 60) // 60%
+                BasicFightEncounter();
+            else if (encounter <= 85) // 25%
+                ShopEncounter();
+            else if (encounter <= 95) // 10%
                 RareEncounter();
+            else if (encounter == 100) // 5%
+                BossEncounter();
         }
         #endregion
 
@@ -125,7 +150,7 @@
                 Console.WriteLine("  Health: " + Program.currentPlayer.health + "   |   Potions: " + Program.currentPlayer.potions);
                 Console.WriteLine("=================================");
                 Console.WriteLine("||   (A)ttack  |  (D)efend     ||");
-                Console.WriteLine("||    (H)eal   |   (F)lee      ||");
+                Console.WriteLine("||    (H)eal   |   (R)un       ||");
                 Console.WriteLine("=================================");
                 Console.ForegroundColor = ConsoleColor.White;
                 string input = GameOperations.PlayerInput("You decide to... ");
@@ -171,22 +196,35 @@
                     }
                     else
                     {
+                        int chanceForHit = rand.Next(0, 4);
                         int potionValue = rand.Next(3, 7);
-                        Console.WriteLine("You hastily retrieve a potion from your bags, uncorking it and swiftly downing the concoction.");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("You regain " + potionValue + " health.");
-                        Program.currentPlayer.health += potionValue;
-                        if (Program.currentPlayer.health > 10)
+                        if (Program.currentPlayer.health < 10)
                         {
-                            Program.currentPlayer.health = 10;
-                            Console.WriteLine("You are at full health.");
+                            Console.WriteLine("You hastily retrieve a potion from your bags, uncorking it and swiftly downing the concoction.");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("You regain " + potionValue + " health.");
+                            Program.currentPlayer.health += potionValue;
+                            if (Program.currentPlayer.health > 10)
+                            {
+                                Program.currentPlayer.health = 10;
+                                Console.WriteLine("You are at full health.");
+                            }
+                            Program.currentPlayer.potions -= 1;
+                            GameOperations.PressAnyKeyToContinue();
+                            if (chanceForHit != 1) // 33%
+                                continue;
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine("The " + mobName + " takes a swing at you while you drink.");
+                                healFailed = true;
+                            }
                         }
-                        Program.currentPlayer.potions -= 1;
-                        GameOperations.PressAnyKeyToContinue();
-                        continue;
+                        else
+                            Console.WriteLine("You are already at full health.");
                     }
                 }
-                else if (input == "flee" || input == "f")
+                else if (input == "run" || input == "r")
                 {
                     Console.WriteLine("You decide to flee.");
 
@@ -207,9 +245,10 @@
                 }
                 else
                 {
-                    Console.WriteLine("INVALID ACTION");
+                    Console.WriteLine(GameOperations.inputError);
                     goto repeat;
                 }
+
                 if (mobHealth > 0)
                     Program.currentPlayer.health = MonsterTurn(isDefending, healFailed, mobPower, mobName, Program.currentPlayer.health);
                 if (Program.currentPlayer.health <= 0)
@@ -219,6 +258,8 @@
                     Console.WriteLine("The light beings to fade from your eyes you see the " + mobName + " stand over your body triumphantly...");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("YOU HAVE DIED");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("You killed " + Program.currentPlayer.monstersKilled + " monsters and ended with " + Program.currentPlayer.gold + " gold.");
                     Console.WriteLine("Press any key to pass on...");
                     Console.ReadKey();
                     Environment.Exit(0);
@@ -253,16 +294,16 @@
         public static Dictionary<int, Monster> BasicMonsters = new()
         {
             // Damage, Health, Gold
-            {0, new("orc",2,5,7)},
-            {1, new("ooze",1,6,5)},
-            {2, new("goblin",1,3,10)}
+            {0, new("orc",2,5,11)},
+            {1, new("ooze",1,6,9)},
+            {2, new("goblin",1,3,14)}
         };
         public static Dictionary<int, Monster> RareMonsters = new()
         {
             // Damage, Health, Gold
-            {0, new("Grumush Mansbane","The Orc Chieftain",3,17,14)},
-            {1, new("Fleshburner","The Monstrous Ooze",2,20,10)},
-            {2, new("Snikkspackle","The Goblin King",2,13,20)},
+            {0, new("Grumush Mansbane","The Orc Chieftain",3,17,25)},
+            {1, new("Fleshburner","The Monstrous Ooze",2,20,23)},
+            {2, new("Snikkspackle","The Goblin King",2,13,30)},
         };
         public struct Monster
         {

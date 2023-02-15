@@ -1,38 +1,54 @@
-﻿namespace TextAdventure
+﻿using System.Text.RegularExpressions;
+using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+namespace TextAdventure
 {
     class Program
     {
+        public static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
         public static Player currentPlayer = new();
         public static bool mainLoop = true;
         static void Main(string[] args)
         {
-            Start();
-            Encounters.FirstEncounter();
+            if (!Directory.Exists("saves"))
+            {
+                Directory.CreateDirectory("saves");
+            }
+            currentPlayer = GameOperations.Load(out bool newP);
+            if (newP)
+                Encounters.FirstEncounter();
             while (mainLoop)
-                Encounters.RandomEncounter();
-
+                Encounters.RandomEncounterTable();
             // TEMP WIN SCREEN
             Console.Clear();
             Console.WriteLine("You win!");
-            Console.WriteLine("You killed " + currentPlayer.monstersKilled + " monsters and ended with " + currentPlayer.gold + " gold.");
+            Console.WriteLine("You slew " + currentPlayer.monstersKilled + " monsters and ended with " + currentPlayer.gold + " gold.");
+            Console.WriteLine("Armor was +" + currentPlayer.armorValue + " and your weapon was +" + currentPlayer.weaponValue + ".");
+            Console.WriteLine("Difficulty was " + currentPlayer.difficultyMod + ".");
             Console.WriteLine("Conglaturations!");
             GameOperations.PressAnyKeyToContinue();
         }
 
-        static void Start()
+        public static Player NewStart(int i)
         {
+            Player p = new();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("TUTORIAL DUNGEON");
-            currentPlayer.name = GameOperations.PlayerInput("Name: ");
-
+            p.name = GameOperations.PlayerInput("Name: ");
+            p.playerID = i;
             Console.Clear();
             Console.WriteLine("You awaken in a dungeon. You feel dazed, and hurt all over. You cannot remember how you got here.");
-            if (currentPlayer.name == "")
+            // no name
+            if (p.name == "")
                 Console.WriteLine("You can't even remember your name...");
-            else if (currentPlayer.name == "shopTest")
-                Shop.LoadShop(currentPlayer);
+            // normal name
             else
-                Console.WriteLine("You remember your name is " + currentPlayer.name + ".");
+            {
+                p.name = textInfo.ToTitleCase(p.name);
+                Console.WriteLine("You remember your name is " + p.name + ".");
+            }
+
 
             GameOperations.PressAnyKeyToContinue();
 
@@ -41,6 +57,8 @@
             Console.WriteLine("You approach the door, opening it with ease. The mechanisms have long since rusted and fell apart.");
 
             GameOperations.PressAnyKeyToContinue();
+            return p;
         }
+
     }
 }
