@@ -41,23 +41,23 @@ namespace TextAdventure
             p.name = GameOperations.PlayerInput("Name: ");
             p.playerID = i;
             Console.Clear();
-            Console.WriteLine("You awaken in a dungeon. You feel dazed, and hurt all over. You cannot remember how you got here.");
+            GameOperations.Print("You awaken in a dungeon. You feel dazed, and hurt all over. You cannot remember how you got here.");
             // no name
             if (p.name == "")
-                Console.WriteLine("You can't even remember your name...");
+                GameOperations.Print("You can't even remember your name...");
             // normal name
             else
             {
                 p.name = textInfo.ToTitleCase(p.name);
-                Console.WriteLine("You remember your name is " + p.name + ".");
+                GameOperations.Print("You remember your name is " + p.name + ".");
             }
 
 
             GameOperations.PressAnyKeyToContinue();
 
-            Console.WriteLine("You fumble around as your eyes adjust to the dim lighting, you are in what appears to be a stone cell.");
-            Console.WriteLine("An old door stands in front of you, with light peering through its cracks.");
-            Console.WriteLine("You approach the door, opening it with ease. The mechanisms have long since rusted and fell apart.");
+            GameOperations.Print("You fumble around as your eyes adjust to the dim lighting, you are in what appears to be a stone cell.");
+            GameOperations.Print("An old door stands in front of you, with light peering through its cracks.");
+            GameOperations.Print("You approach the door, opening it with ease. The mechanisms have long since rusted and fallen apart.");
 
             GameOperations.PressAnyKeyToContinue();
             return p;

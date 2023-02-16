@@ -11,12 +11,12 @@
             var enemyOrc = BasicMonsters[/*ORC*/ 0];
             Console.Clear();
             if ("aeiou".Contains(enemyOrc.Name[0]))
-                Console.WriteLine("Upon opening the door, you noticed an " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
+                GameOperations.Print("Upon opening the door, you noticed an " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
             else
-                Console.WriteLine("Upon opening the door, you noticed a " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
-            Console.WriteLine("Outside the cell, a rusty shortsword sits propped up against the wall.");
-            Console.WriteLine("You retrieve it and charge towards your former captor with newfound vigor.");
-            Console.WriteLine("The " + enemyOrc.Name + " notices your charge, preparing to fight...");
+                GameOperations.Print("Upon opening the door, you noticed a " + enemyOrc.Name + " with their back turned towards you, they have not noticed you yet.");
+            GameOperations.Print("Outside the cell, a rusty shortsword sits propped up against the wall.");
+            GameOperations.Print("You retrieve it and charge towards your former captor with newfound vigor.");
+            GameOperations.Print("The " + enemyOrc.Name + " notices your charge, preparing to fight...");
 
             GameOperations.PressAnyKeyToContinue();
 
@@ -115,9 +115,9 @@
         public static void RandomEncounterTable()
         {
             int encounter = rand.Next(1, 101);
-            if (encounter <= 60) // 60%
+            if (encounter <= 55) // 55%
                 BasicFightEncounter();
-            else if (encounter <= 85) // 25%
+            else if (encounter <= 85) // 30%
                 ShopEncounter();
             else if (encounter <= 95) // 10%
                 RareEncounter();
@@ -255,12 +255,12 @@
                 {
                     // U DIED LOL SO BAD HAHAHAHAHAHA
                     Console.Clear();
-                    Console.WriteLine("The light beings to fade from your eyes you see the " + mobName + " stand over your body triumphantly...");
+                    GameOperations.Print("The light beings to fade from your eyes you see the " + mobName + " stand over your body triumphantly...");
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("YOU HAVE DIED");
+                    GameOperations.Print("YOU HAVE DIED", 80);
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("You killed " + Program.currentPlayer.monstersKilled + " monsters and ended with " + Program.currentPlayer.gold + " gold.");
-                    Console.WriteLine("Press any key to pass on...");
+                    GameOperations.Print("You killed " + Program.currentPlayer.monstersKilled + " monsters and ended with " + Program.currentPlayer.gold + " gold.");
+                    GameOperations.Print("Press any key to pass on...");
                     Console.ReadKey();
                     GameOperations.Delete();
                     Environment.Exit(0);
