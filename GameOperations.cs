@@ -5,6 +5,7 @@ namespace TextAdventure
     class GameOperations
     {
         public const string inputError = "UNRECOGNIZED INPUT";
+        private const string defaultContinue = "Press any key to continue...";
         public static string PlayerInput(string value)
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -12,19 +13,30 @@ namespace TextAdventure
             return Console.ReadLine().Trim().ToLower();
         }
 
-        public static void PressAnyKeyToContinue()
+        public static void PressAnyKeyToContinue(string continueString = defaultContinue)  
         {
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine(continueString);
             Console.ReadKey();
             Console.Clear();
         }
 
+        public static void Print(string text, int delay = 25)
+        {
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                System.Threading.Thread.Sleep(delay);
+            }
+            Console.WriteLine();
+        }
+
+        #region Local Save Functions
         public static void Quit()
         {
             Save();
             Environment.Exit(0);
         }
-        
+
         public static void Save()
         {
             BinaryFormatter binForm = new();
@@ -63,15 +75,21 @@ namespace TextAdventure
             while (true)
             {
                 Console.Clear();
-                System.Console.WriteLine("Select save: ");
-
-                foreach (Player player in players)
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Welcome to Rangtuk's Dungeon!");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                if (players.Count > 0)
                 {
-                    Console.WriteLine(player.playerID + ": " + player.name);
+                    Console.WriteLine("Enter id or character name (id:# or charactername [not case sensitive])");
+                    Console.WriteLine("Or type 'create' to make a new character.");
+                    Console.WriteLine("Characters: ");
+                    foreach (Player player in players)
+                        Console.WriteLine("  " + player.playerID + ": " + player.name);
                 }
+                else
+                    Console.WriteLine("Type 'create' to make a new character.");
+                Console.ForegroundColor = ConsoleColor.White;
 
-                Console.WriteLine("Enter character name or id (id:# or playername)");
-                Console.WriteLine("Alternatively 'create' will make a new save");
                 string[] data = Console.ReadLine().Split(':');
                 try
                 {
@@ -82,15 +100,18 @@ namespace TextAdventure
                             foreach (Player player in players)
                             {
                                 if (player.playerID == id)
+                                {
+                                    Console.Clear();
                                     return player;
+                                }
                             }
                             Console.WriteLine("Character Id not found!");
-                            GameOperations.PressAnyKeyToContinue();
+                            PressAnyKeyToContinue("Press any key to try again...");
                         }
                         else
                         {
                             System.Console.WriteLine("Invalid input: Id needs to be a number!");
-                            GameOperations.PressAnyKeyToContinue();
+                            PressAnyKeyToContinue("Press any key to try again...");
                         }
                     }
                     else if (data[0] == "create")
@@ -111,15 +132,18 @@ namespace TextAdventure
                             }
                         }
                         Console.WriteLine("Character name not found!");
-                        GameOperations.PressAnyKeyToContinue();
+                        PressAnyKeyToContinue("Press any key to try again...");
                     }
                 }
                 catch (IndexOutOfRangeException)
                 {
                     System.Console.WriteLine("Invalid input: Id needs to be a number!");
-                    GameOperations.PressAnyKeyToContinue();
+                    PressAnyKeyToContinue("Press any key to try again...");
                 }
             }
         }
+        #endregion
+
     }
+
 }
