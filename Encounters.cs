@@ -262,6 +262,7 @@
                     Console.WriteLine("You killed " + Program.currentPlayer.monstersKilled + " monsters and ended with " + Program.currentPlayer.gold + " gold.");
                     Console.WriteLine("Press any key to pass on...");
                     Console.ReadKey();
+                    GameOperations.Delete();
                     Environment.Exit(0);
                 }
                 Console.ForegroundColor = ConsoleColor.White;
