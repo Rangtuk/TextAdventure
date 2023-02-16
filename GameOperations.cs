@@ -13,14 +13,14 @@ namespace TextAdventure
             return Console.ReadLine().Trim().ToLower();
         }
 
-        public static void PressAnyKeyToContinue(string continueString = defaultContinue)  
+        public static void PressAnyKeyToContinue(string continueString = defaultContinue)
         {
             Console.WriteLine(continueString);
             Console.ReadKey();
             Console.Clear();
         }
 
-        public static void Print(string text, int delay = 25)
+        public static void Print(string text, int delay = 20)
         {
             foreach (char c in text)
             {

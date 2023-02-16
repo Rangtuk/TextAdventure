@@ -42,7 +42,8 @@
             else if (input.ToLower() == "run" || input.ToLower() == "r")
             {
                 Console.WriteLine("You decide to run!");
-                if (rand.Next(1, 11) <= 1) //10% to fail
+                int chanceToRun = rand.Next(1, 101) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? +5 : 0);
+                if (chanceToRun <= 20) //20% to fail // 15% if Rogue
                 {
                     Console.WriteLine("The " + randomMonster.Name + " notices your attempt to flee, and moves to block your escape! Seems you will have no choice but to fight.");
                     GameOperations.PressAnyKeyToContinue();
@@ -77,7 +78,8 @@
             else if (input.ToLower() == "run" || input.ToLower() == "r")
             {
                 Console.WriteLine("You decide to run!");
-                if (rand.Next(1, 11) <= 3) //30% to fail
+                int chanceToRun = rand.Next(1, 101) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? +5 : 0);
+                if (chanceToRun <= 40) //40% to fail // 35% if Rogue
                 {
                     Console.WriteLine(randomMonster.RareTitle + " notices your attempt to flee, and moves to block your escape! Seems you will have no choice but to fight.");
                     GameOperations.PressAnyKeyToContinue();
@@ -155,22 +157,29 @@
                 Console.ForegroundColor = ConsoleColor.White;
                 string input = GameOperations.PlayerInput("You decide to... ");
                 Console.Clear();
-                int damageToMonster = rand.Next(1, 4) + rand.Next(1, Program.currentPlayer.weaponValue + 1);
+                int damageToMonster = rand.Next(1, 4) + rand.Next(1, Program.currentPlayer.weaponValue + 1) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Mage) ? +(Program.currentPlayer.weaponValue + 1) : 0);
                 if (input == "attack" || input == "a")
                 {
                     Console.WriteLine("You decide to attack.");
-                    if (rand.Next(1, 21) == 20)
+                    int critChance = rand.Next(1, 21);
+                    if (critChance == 20 || (critChance >= 18 && Program.currentPlayer.currentClass == Player.CharacterClass.Warrior))
                     {
                         damageToMonster++;
                         damageToMonster *= 2;
                         Console.ForegroundColor = ConsoleColor.DarkYellow;
                         Console.WriteLine("CRITICAL HIT!!");
-                        Console.WriteLine("You channel your strength into a mighty blow, you strike the " + mobName + " for " + damageToMonster + " damage!");
+                        if (Program.currentPlayer.currentClass != Player.CharacterClass.Mage)
+                            Console.WriteLine("You channel your strength into a mighty blow, you strike the " + mobName + " for " + damageToMonster + " damage!");
+                        else
+                            Console.WriteLine("You channel you mana into a powerful spell, you blast the " + mobName + " for " + damageToMonster + " damage!");
                     }
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("You strike the " + mobName + " for " + damageToMonster + " damage.");
+                        if (Program.currentPlayer.currentClass != Player.CharacterClass.Mage)
+                            Console.WriteLine("You strike the " + mobName + " for " + damageToMonster + " damage.");
+                        else
+                            Console.WriteLine("You blast the " + mobName + " with a spell for " + damageToMonster + " damage.");
                     }
                     mobHealth -= damageToMonster;
                 }
@@ -182,7 +191,10 @@
                     if (damageToMonster < 1)
                         damageToMonster = 0;
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("You ready your weapon to parry the " + mobName + "'s attack. It attacks, and you riposte for " + damageToMonster + " damage.");
+                    if (Program.currentPlayer.currentClass != Player.CharacterClass.Mage)
+                        Console.WriteLine("You ready your weapon to parry the " + mobName + "'s attack. It attacks, and you riposte for " + damageToMonster + " damage.");
+                    else
+                        Console.WriteLine("You conjure a shield, absorbing part of the " + mobName + "'s attack and retailiate with a quick spell for " + damageToMonster + " damage.");
                     mobHealth -= damageToMonster;
                 }
                 else if (input == "heal" || input == "h")
@@ -197,7 +209,7 @@
                     else
                     {
                         int chanceForHit = rand.Next(0, 4);
-                        int potionValue = rand.Next(3, 7);
+                        int potionValue = rand.Next(2, 5) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Cleric) ? +rand.Next(2, 5) : 0);
                         if (Program.currentPlayer.health < 10)
                         {
                             Console.WriteLine("You hastily retrieve a potion from your bags, uncorking it and swiftly downing the concoction.");
@@ -227,8 +239,8 @@
                 else if (input == "run" || input == "r")
                 {
                     Console.WriteLine("You decide to flee.");
-
-                    if (rand.Next(0, 2) == 0)
+                    int escapeChance = rand.Next(1, 11) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? +2 : 0);
+                    if (escapeChance <= 50) //50% base, 70% if Rogue
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("As you attempt to flee from the " + mobName + " it strikes! Catching you in the back, and halting your escape.");
@@ -297,14 +309,14 @@
             // Damage, Health, Gold
             {0, new("orc",2,5,11)},
             {1, new("ooze",1,6,9)},
-            {2, new("goblin",1,3,14)}
+            {2, new("goblin",1,3,14)},
         };
         public static Dictionary<int, Monster> RareMonsters = new()
         {
             // Damage, Health, Gold
-            {0, new("Grumush Mansbane","The Orc Chieftain",3,17,25)},
-            {1, new("Fleshburner","The Monstrous Ooze",2,20,23)},
-            {2, new("Snikkspackle","The Goblin King",2,13,30)},
+            {0, new("Grumush Mansbane",3,17,25,"The Orc Chieftain")},
+            {1, new("Fleshburner",2,20,23,"The Monstrous Ooze")},
+            {2, new("Snikkspackle",2,13,30,"The Goblin King")},
         };
         public struct Monster
         {
@@ -313,15 +325,7 @@
             public int GoldMax;
             public string Name;
             public string RareTitle;
-            public Monster(string name, int power, int health, int goldMax)
-            {
-                Name = name;
-                Power = power;
-                Health = health;
-                GoldMax = goldMax;
-                RareTitle = "";
-            }
-            public Monster(string name, string rareTitle, int power, int health, int goldMax)
+            public Monster(string name, int power, int health, int goldMax, string rareTitle = "")
             {
                 Name = name;
                 Power = power;
@@ -329,8 +333,8 @@
                 GoldMax = goldMax;
                 RareTitle = rareTitle;
             }
+
         }
         #endregion
     }
 }
-
