@@ -11,13 +11,16 @@ namespace TextAdventure
         public static bool mainLoop = true;
         static void Main(string[] args)
         {
-            if (!Directory.Exists("saves"))
+            if (!Directory.Exists("localSaves"))
             {
-                Directory.CreateDirectory("saves");
+                Directory.CreateDirectory("localSaves");
             }
             currentPlayer = GameOperations.Load(out bool newP);
             if (newP)
+            {
+                GameOperations.Save();
                 Encounters.FirstEncounter();
+            }
             while (mainLoop)
                 Encounters.RandomEncounterTable();
             // TEMP WIN SCREEN

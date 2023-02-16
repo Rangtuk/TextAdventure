@@ -28,17 +28,24 @@ namespace TextAdventure
         public static void Save()
         {
             BinaryFormatter binForm = new();
-            string path = "saves/" + Program.currentPlayer.playerID.ToString();
+            string path = "localSaves/" + Program.currentPlayer.playerID.ToString();
             FileStream file = File.Open(path, FileMode.OpenOrCreate);
             binForm.Serialize(file, Program.currentPlayer);
             file.Close();
+        }
+
+        public static void Delete()
+        {
+            BinaryFormatter binForm = new();
+            string path = "localSaves/" + Program.currentPlayer.playerID.ToString();
+            File.Delete(path);
         }
 
         public static Player Load(out bool newP)
         {
             newP = false;
             Console.Clear();
-            string[] paths = Directory.GetFiles("saves");
+            string[] paths = Directory.GetFiles("localSaves");
             List<Player> players = new();
             int idCount = 0;
 
@@ -97,8 +104,11 @@ namespace TextAdventure
                     {
                         foreach (Player player in players)
                         {
-                            if (player.name == data[0])
+                            if (player.name == Program.textInfo.ToTitleCase(data[0]))
+                            {
+                                Console.Clear();
                                 return player;
+                            }
                         }
                         Console.WriteLine("Character name not found!");
                         GameOperations.PressAnyKeyToContinue();
