@@ -37,8 +37,32 @@ namespace TextAdventure
         {
             Player p = new();
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("TUTORIAL DUNGEON");
+            GameOperations.Print("TUTORIAL DUNGEON", 15);
             p.name = GameOperations.PlayerInput("Name: ");
+
+        // label
+        repeat:
+            bool flag = false;
+            while (flag == false)
+            {
+                flag = true;
+                GameOperations.Print("Warrior | Mage | Rogue | Cleric", 15);
+                string input = GameOperations.PlayerInput("Class: ");
+                if (input == "mage")
+                    p.currentClass = Player.CharacterClass.Mage;
+                else if (input == "cleric")
+                    p.currentClass = Player.CharacterClass.Cleric;
+                else if (input == "rogue")
+                    p.currentClass = Player.CharacterClass.Rogue;
+                else if (input == "warrior")
+                    p.currentClass = Player.CharacterClass.Warrior;
+                else
+                {
+                    flag = false;
+                    Console.WriteLine("INVALID CLASS");
+                    goto repeat;
+                }
+            }
             p.playerID = i;
             Console.Clear();
             GameOperations.Print("You awaken in a dungeon. You feel dazed, and hurt all over. You cannot remember how you got here.");
@@ -49,7 +73,7 @@ namespace TextAdventure
             else
             {
                 p.name = textInfo.ToTitleCase(p.name);
-                GameOperations.Print("You remember your name is " + p.name + ".");
+                GameOperations.Print("You remember your name is " + p.name + ", a " + p.currentClass + ".");
             }
 
 

@@ -10,16 +10,17 @@ namespace TextAdventure
 
         public static void RunShop(Player p)
         {
-            int potionPrice;
-            int weaponPrice;
-            int armorPrice;
-            int difficultyPrice;
+            decimal potionPrice;
+            decimal weaponPrice;
+            decimal armorPrice;
+            decimal difficultyPrice;
             while (true)
             {
-                potionPrice = 2 * (p.difficultyMod + 1);
-                weaponPrice = 10 * p.weaponValue;
-                armorPrice = 10 * (p.armorValue + 1);
-                difficultyPrice = 30 + 10 * p.difficultyMod;
+                // 10% Discount for rogues
+                potionPrice = Math.Round(5M * (p.difficultyMod + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
+                weaponPrice = Math.Round(10M * p.weaponValue * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
+                armorPrice = Math.Round(10M * (p.armorValue + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
+                difficultyPrice = Math.Round(30M + 10M * p.difficultyMod * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 2M : 0));
             //label
             repeat:
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -55,7 +56,7 @@ namespace TextAdventure
                     Console.WriteLine("You leave the shop.");
                     break;
                 }
-                else if (input == "quit"|| input == "quit game" || input == "q")
+                else if (input == "quit" || input == "quit game" || input == "q")
                 {
                     GameOperations.Quit();
                 }
@@ -69,7 +70,7 @@ namespace TextAdventure
 
         }
 
-        static void TryBuy(string item, int cost, Player p)
+        static void TryBuy(string item, decimal cost, Player p)
         {
             if (p.gold >= cost)
             {
@@ -88,8 +89,8 @@ namespace TextAdventure
                         p.difficultyMod++;
                         break;
                 }
-                Console.WriteLine("Thank you for your purchase.( " + item + " +1)");
-                p.gold -= cost;
+                Console.WriteLine("Thank you for your purchase.( " + item + " + 1)");
+                p.gold -= Convert.ToInt32(Math.Round(cost));
             }
             else
             {

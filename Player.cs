@@ -13,5 +13,8 @@
         public int weaponValue = 1;
         public int monstersKilled = 0;
         public int difficultyMod = 0;
+
+        public enum CharacterClass {Mage, Cleric, Warrior, Rogue}
+        public CharacterClass currentClass = CharacterClass.Warrior;
     }
 }
