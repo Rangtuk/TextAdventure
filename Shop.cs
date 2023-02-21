@@ -17,10 +17,10 @@ namespace TextAdventure
             while (true)
             {
                 // 10% Discount for rogues
-                potionPrice = Math.Round(5M * (p.difficultyMod + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
-                weaponPrice = Math.Round(10M * p.weaponValue * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
-                armorPrice = Math.Round(10M * (p.armorValue + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 0));
-                difficultyPrice = Math.Round(30M + 10M * p.difficultyMod * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 2M : 0));
+                potionPrice = Math.Round(5M * (p.difficultyMod + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 1));
+                weaponPrice = Math.Round(10M * p.weaponValue * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 1));
+                armorPrice = Math.Round(10M * (p.armorValue + 1) * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 1));
+                difficultyPrice = Math.Round(30M + 10M * p.difficultyMod * ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? 0.9M : 1));
             //label
             repeat:
                 Console.ForegroundColor = ConsoleColor.Yellow;

@@ -239,7 +239,7 @@
                 else if (input == "run" || input == "r")
                 {
                     Console.WriteLine("You decide to flee.");
-                    int escapeChance = rand.Next(1, 11) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? +2 : 0);
+                    int escapeChance = rand.Next(1, 101) + ((Program.currentPlayer.currentClass == Player.CharacterClass.Rogue) ? +2 : 0);
                     if (escapeChance <= 50) //50% base, 70% if Rogue
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -282,9 +282,12 @@
             }
             if (isFleeing == false && mobHealth <= 0) // Victory
             {
+                int expGained = Program.currentPlayer.GetXP();
                 int goldGained = rand.Next(1, mobGoldMax + 1);
-                Console.WriteLine("The " + mobName + " is slain! You gain " + goldGained + " gold.");
+                Console.WriteLine("The " + mobName + " is slain! You gain " + expGained + " experience and " + goldGained + " gold.");
+                Console.WriteLine();
                 Program.currentPlayer.gold += goldGained;
+
                 Program.currentPlayer.monstersKilled += 1;
                 GameOperations.PressAnyKeyToContinue();
             }

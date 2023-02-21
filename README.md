@@ -10,4 +10,4 @@ Class Attributes
 _Warrior - Higher chance to crit
 _Mage - Does more damage
 _Rogue - Better chance to flee and gets discount at shop
-_Cleric - Heals much more from potions
+_Cleric - Heals much more from potions, less exp to level up
