@@ -7,7 +7,7 @@ If you see code stink, I probably didn't, as of this README I only have about 8 
 If you happen to clone this project, playtest to your hearts content! Save files have been implemented that will save to your local machine
 
 Class Attributes  
-_Warrior - Higher chance to crit
-_Mage - Does more damage
-_Rogue - Better chance to flee and gets discount at shop
+_Warrior - Higher chance to crit  
+_Mage - Does more damage  
+_Rogue - Better chance to flee and gets discount at shop  
 _Cleric - Heals much more from potions
